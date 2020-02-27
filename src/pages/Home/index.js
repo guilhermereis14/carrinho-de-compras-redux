@@ -37,6 +37,7 @@ import { ProductList } from './styles';
 
   render () {
     const { products } = this.state; /* Buscando os products do estado, através da desestruturação */
+    const { amount } = this.props;
     return (/* ProductList será uma lista UL e terá vários produtos "li" */
       <ProductList>
         { products.map(product => (
@@ -48,7 +49,7 @@ import { ProductList } from './styles';
 
             <button type="button" onClick={ () => this.handleAddProduct(product)}>
               <div>
-                <MdAddShoppingCart size={16} color="#FFF" /> 3
+                <MdAddShoppingCart size={16} color="#FFF" /> {amount[product.id] || 0}
               </div>
               <span>ADICIONAR AO CARRINHO</span>
             </button>
@@ -59,10 +60,19 @@ import { ProductList } from './styles';
   );
   }
 }
+const mapStateToProps = state => ({
+  amount: state.cart.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+
+    return amount;
+  }, {}),
+
+});
+
 const mapDispatchToProps = dispatch =>
   bindActionCreators(CartActions , dispatch);
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Home);
